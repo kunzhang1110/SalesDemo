@@ -10,7 +10,6 @@ export class CustomerPage extends Component {
         super(props);
         this.state = { customers: [] };
         this.getCustomers();
-
     }
 
     getCustomers = () => {
@@ -22,17 +21,31 @@ export class CustomerPage extends Component {
             });
     }
 
-    submitHandler = (e) => {
-        axios.post('/api/Customerd', {
-            name: this.state.customer.name,
-            address: this.state.customer.address
-        }).then((res) => {
-            console.log(res);
-            this.handleClose();
-        })
+    submitHandler = (e, customer, isEdit) => {
+        if (isEdit) {
+            axios.put('/api/Customer/' + customer.id, {
+                name: customer.name,
+                address: customer.address
+            }).then(resp => { })
+
+        }
+
+        //axios.post('/api/Customer', {
+        //    name: this.state.customer.name,
+        //    address: this.state.customer.address
+        //}).then((res) => {
+        //    this.handleClose();
+        //})
     }
 
-    static renderCustomerTable(customers) {
+    changeHandler = (id, e, { name, value }) => {
+        const customers = [...this.state.customers]
+        const idx = customers.findIndex(c => c.id == id);
+        customers[idx] = { ...customers[idx], [name]: value }
+        this.setState({ customers})
+    }
+
+    renderCustomerTable(customers) {
         return (
             <Table celled>
                 <Table.Header>
@@ -50,7 +63,7 @@ export class CustomerPage extends Component {
                                 <Table.Cell>{c.name}</Table.Cell>
                                 <Table.Cell>{c.address}</Table.Cell>
                                 <Table.Cell>
-                                    <CustomerForm customer={c} submitHandler={this.submitHandler} />
+                                    <CustomerForm  customer={c} submitHandler={this.submitHandler}/>
                                 </Table.Cell>
                                 <Table.Cell>
                                     <Button >Delete</Button>
@@ -68,7 +81,7 @@ export class CustomerPage extends Component {
         return (
             <div>
                 <CustomerForm />
-                {CustomerPage.renderCustomerTable(this.state.customers)}
+                {this.renderCustomerTable(this.state.customers)}
             </div>
         );
     }
