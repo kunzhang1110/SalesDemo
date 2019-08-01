@@ -23,7 +23,7 @@ export class CustomerPage extends Component {
     }
 
     submitHandler = (e) => {
-        axios.post('/api/Customer', {
+        axios.post('/api/Customerd', {
             name: this.state.customer.name,
             address: this.state.customer.address
         }).then((res) => {
