@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, Header, Image, Button, Icon, Label, Menu, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { CustomerForm } from './CustomerForm'
+import { CustomerForm } from './CustomerForm';
+import { DeleteConfirm } from './DeleteConfirm';
 import axios from 'axios'
 
 export class CustomerPage extends Component {
@@ -21,28 +22,42 @@ export class CustomerPage extends Component {
             });
     }
 
-    submitHandler = (e, customer, isEdit) => {
-        if (isEdit) {
-            axios.put('/api/Customer/' + customer.id, {
-                name: customer.name,
-                address: customer.address
-            }).then(resp => { })
+    //submitHandler = (e, customer, isEdit) => {
+    //    if (isEdit) {
+    //        axios.put('/api/Customer/' + customer.id, {
+    //            name: customer.name,
+    //            address: customer.address
+    //        }).then(resp => { })
 
-        }
+    //    }
 
-        //axios.post('/api/Customer', {
-        //    name: this.state.customer.name,
-        //    address: this.state.customer.address
-        //}).then((res) => {
-        //    this.handleClose();
-        //})
+    //    axios.post('/api/Customer', {
+    //        name: this.state.customer.name,
+    //        address: this.state.customer.address
+    //    }).then((res) => {
+    //        this.handleClose();
+    //    })
+    //}
+
+    editHandler = (edittedCustomer)=> {
+        const customers = this.state.customers.map(c => {
+            if (c.id == edittedCustomer.id) {
+                c = edittedCustomer;
+            }
+            return c;
+        });
+        console.log(customers)
+        this.setState({ customers });
+
     }
 
-    changeHandler = (id, e, { name, value }) => {
-        const customers = [...this.state.customers]
-        const idx = customers.findIndex(c => c.id == id);
-        customers[idx] = { ...customers[idx], [name]: value }
-        this.setState({ customers})
+    createHandler = (createdCustomer) => {
+        this.setState({ customers: [...this.state.customers, createdCustomer] })
+    }
+
+    deleteHandler = (id) => {
+        const customers = this.state.customers.filter(c => c.id != id);
+        this.setState({ customers });
     }
 
     renderCustomerTable(customers) {
@@ -63,10 +78,10 @@ export class CustomerPage extends Component {
                                 <Table.Cell>{c.name}</Table.Cell>
                                 <Table.Cell>{c.address}</Table.Cell>
                                 <Table.Cell>
-                                    <CustomerForm  customer={c} submitHandler={this.submitHandler}/>
+                                    <CustomerForm customer={c} editHandler={this.editHandler}/>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <Button >Delete</Button>
+                                    <DeleteConfirm customer={c} deleteHandler={this.deleteHandler} />
                                 </Table.Cell>
                             </Table.Row>
                         ))
@@ -80,7 +95,7 @@ export class CustomerPage extends Component {
     render() {
         return (
             <div>
-                <CustomerForm />
+                <CustomerForm createHandler={this.createHandler}/>
                 {this.renderCustomerTable(this.state.customers)}
             </div>
         );

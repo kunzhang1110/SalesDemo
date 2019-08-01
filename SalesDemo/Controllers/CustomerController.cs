@@ -68,8 +68,6 @@ namespace SalesDemo.Controllers
             customerInDb.Address = customer.Address;
             customerInDb.Sale = customer.Sale;
 
-
-
             await _context.SaveChangesAsync();
             return NoContent();
         }
