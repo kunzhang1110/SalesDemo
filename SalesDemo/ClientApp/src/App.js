@@ -10,8 +10,8 @@ export default class App extends Component {
     return (
         <div>
             <NavMenu />
-            <Route exact path="/" component={CustomerPage} />
-            <Route exact path="/Customer" component={CustomerPage} />
+            <Route exact path="/" component={()=> <CustomerPage />} />
+            <Route exact path="/Customer" component={() => <CustomerPage />}  />
       </div>
     );
   }

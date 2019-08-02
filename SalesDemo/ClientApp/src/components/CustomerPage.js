@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Header, Image, Button, Icon, Label, Menu, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { CustomerForm } from './CustomerForm';
+import { ModalForm } from './ModalForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import axios from 'axios'
 
@@ -10,10 +10,10 @@ export class CustomerPage extends Component {
     constructor(props) {
         super(props);
         this.state = { customers: [] };
-        this.getCustomers();
+        this.getData();
     }
 
-    getCustomers = () => {
+    getData = () => {
         fetch('/api/Customer')
             .then(
                 response => response.json())
@@ -78,10 +78,10 @@ export class CustomerPage extends Component {
                                 <Table.Cell>{c.name}</Table.Cell>
                                 <Table.Cell>{c.address}</Table.Cell>
                                 <Table.Cell>
-                                    <CustomerForm customer={c} editHandler={this.editHandler}/>
+                                    <ModalForm item={c} editHandler={this.editHandler} model="Customer"/>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <DeleteConfirm customer={c} deleteHandler={this.deleteHandler} />
+                                    <DeleteConfirm item={c} deleteHandler={this.deleteHandler} />
                                 </Table.Cell>
                             </Table.Row>
                         ))
@@ -95,7 +95,7 @@ export class CustomerPage extends Component {
     render() {
         return (
             <div>
-                <CustomerForm createHandler={this.createHandler}/>
+                <ModalForm createHandler={this.createHandler} model="Customer"/>
                 {this.renderCustomerTable(this.state.customers)}
             </div>
         );
