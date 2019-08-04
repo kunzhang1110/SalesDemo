@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route } from "react-router";
-import { CustomerPage } from "./components/CustomerPage";
+import { ModelPage } from "./components/ModelPage";
 import { NavMenu } from "./components/NavMenu";
 
 export default class App extends Component {
@@ -10,8 +10,8 @@ export default class App extends Component {
     return (
         <div>
             <NavMenu />
-            <Route exact path="/" component={()=> <CustomerPage />} />
-            <Route exact path="/Customer" component={() => <CustomerPage />}  />
+            <Route exact path="/" component={() => <ModelPage model="Customer"/>} />
+            <Route exact path="/Customer" component={() => <ModelPage model="Customer"/>}  />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 ﻿import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Header, Modal, Form } from 'semantic-ui-react'
+import { Button, Modal, Form } from 'semantic-ui-react'
 import axios from 'axios';
 import { Capitalize } from "../utils"
 
@@ -10,25 +10,21 @@ export class ModalForm extends Component {
         super(props);
         this.state = {
             modalOpen: false,
-            isEdit: (this.props.item != null) ? true : false,
-            item: (this.props.item != null) ? this.props.item : { name: "", adress: "" }
+            item: this.props.item != null ? this.props.item : {}
         }
+
     }
 
     handleOpen = () => this.setState({ modalOpen: true })
     handleClose = () => this.setState({ modalOpen: false })
-
-    componentDidMount() {
-
-    }
 
     cancelHandler = () => {
         this.setState({ item: this.props.item, modalOpen: false });
     }
 
     submitHandler = (e) => {
-        if (this.state.isEdit) {//if editing
-            axios.put('/api/'+this.props.model+'/' + this.state.item.id, {
+        if (this.props.isEdit) {//if editing
+            axios.put('/api/' + this.props.model + '/' + this.state.item.id, {
                 name: this.state.item.name,
                 address: this.state.item.address
             }).then((res) => {
@@ -36,6 +32,7 @@ export class ModalForm extends Component {
                 this.props.editHandler(this.state.item);
             })
         } else {//if creating
+
             axios.post('/api/' + this.props.model, {
                 name: this.state.item.name,
                 address: this.state.item.address
@@ -54,25 +51,22 @@ export class ModalForm extends Component {
     render() {
         return (
             <Modal
-                trigger={<Button onClick={this.handleOpen}> {(this.state.isEdit) ? "Edit" : "New " +this.props.model} </Button>}
+                trigger={<Button onClick={this.handleOpen}> {(this.props.isEdit) ? "Edit" : "New " + this.props.model} </Button>}
                 open={this.state.modalOpen}
                 onClose={this.handleClose}
             >
-                <Modal.Header>{((this.state.isEdit) ? "Edit " : "Create ") + this.props.model}</Modal.Header>
+                <Modal.Header>{((this.props.isEdit) ? "Edit " : "Create ") + this.props.model}</Modal.Header>
                 <Modal.Content>
-
                     <Modal.Description>
-                        <Header></Header>
                         <Form onSubmit={this.submitHandler}>
                             {Object.keys(this.state.item).map(name => {
-                                if (name != "id" && name != "sale") {
+                                if (name !== "id" && name !== "sale") {
                                     return (
-                                        <Form.Field>
+                                        <Form.Field key={name}>
                                             <label>{Capitalize(name)}</label>
                                             <Form.Input
-                                                placeholder='Jone'
                                                 name={name}
-                                                value={this.state.item[name]}
+                                                value={this.props.isEdit?this.state.item[name]:""}
                                                 onChange={this.changeHandler} />
                                         </Form.Field>
                                     )
@@ -81,17 +75,16 @@ export class ModalForm extends Component {
                             <Button type='submit' color="green">Submit</Button>
                             <Button onClick={this.cancelHandler}>Cancel</Button>
                         </Form>
-
                     </Modal.Description>
-
                 </Modal.Content>
-
             </Modal>
+
         );
     }
 }
 
 ModalForm.propTypes = {
     item: PropTypes.object,
-    editHandler: PropTypes.func
+    editHandler: PropTypes.func,
+    isEdit: PropTypes.bool
 }

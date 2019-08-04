@@ -1,25 +1,29 @@
 import React, { Component } from 'react';
-import { Modal, Header, Image, Button, Icon, Label, Menu, Table } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Table } from 'semantic-ui-react';
 import { ModalForm } from './ModalForm';
 import { DeleteConfirm } from './DeleteConfirm';
-import axios from 'axios'
+import PropTypes from "prop-types";
 
-export class CustomerPage extends Component {
+export class ModelPage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { customers: [] };
-        this.getData();
+        this.state = { dataSet: [] };
     }
 
     getData = () => {
-        fetch('/api/Customer')
+        fetch('/api/' + this.props.model)
             .then(
                 response => response.json())
             .then(data => {
-                this.setState({ customers: data });
+                this.setState({ dataSet: data });
             });
+
+    }
+
+    componentDidMount() {
+
+        this.getData();
     }
 
     //submitHandler = (e, customer, isEdit) => {
@@ -39,28 +43,23 @@ export class CustomerPage extends Component {
     //    })
     //}
 
-    editHandler = (edittedCustomer)=> {
-        const customers = this.state.customers.map(c => {
-            if (c.id == edittedCustomer.id) {
-                c = edittedCustomer;
-            }
-            return c;
+    editHandler = (edittedItem) => {
+        const dataSet = this.state.dataSet.map(c => {
+            return (c.id === edittedItem.id) ? edittedItem:c;
         });
-        console.log(customers)
-        this.setState({ customers });
-
+        this.setState({ dataSet });
     }
 
-    createHandler = (createdCustomer) => {
-        this.setState({ customers: [...this.state.customers, createdCustomer] })
+    createHandler = (createdItem) => {
+        this.setState({ dataSet: [...this.state.dataSet, createdItem] })
     }
 
     deleteHandler = (id) => {
-        const customers = this.state.customers.filter(c => c.id != id);
-        this.setState({ customers });
+        const dataSet = this.state.dataSet.filter(c => c.id !== id);
+        this.setState({ dataSet });
     }
 
-    renderCustomerTable(customers) {
+    renderDataTable(dataSet) {
         return (
             <Table celled>
                 <Table.Header>
@@ -73,15 +72,15 @@ export class CustomerPage extends Component {
                 </Table.Header>
                 <Table.Body>
                     {
-                        customers.map(c => (
+                        dataSet.map(c => (
                             <Table.Row key={c.id}>
                                 <Table.Cell>{c.name}</Table.Cell>
                                 <Table.Cell>{c.address}</Table.Cell>
                                 <Table.Cell>
-                                    <ModalForm item={c} editHandler={this.editHandler} model="Customer"/>
+                                    <ModalForm item={c} editHandler={this.editHandler} model={this.props.model} isEdit={true}/>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <DeleteConfirm item={c} deleteHandler={this.deleteHandler} />
+                                    <DeleteConfirm item={c} model={this.props.model} deleteHandler={this.deleteHandler} />
                                 </Table.Cell>
                             </Table.Row>
                         ))
@@ -93,11 +92,16 @@ export class CustomerPage extends Component {
     }
 
     render() {
+        //{ console.log(this.state.dataSet); debugger;}
         return (
             <div>
-                <ModalForm createHandler={this.createHandler} model="Customer"/>
-                {this.renderCustomerTable(this.state.customers)}
+                {this.state.dataSet.length>0 ? <ModalForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
+                {this.renderDataTable(this.state.dataSet)}
             </div>
         );
     }
+}
+
+ModelPage.propTypes = {
+    model:PropTypes.string
 }

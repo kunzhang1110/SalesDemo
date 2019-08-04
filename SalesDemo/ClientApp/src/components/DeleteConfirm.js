@@ -1,6 +1,6 @@
 ﻿import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Header, Modal, Form } from 'semantic-ui-react'
+import { Button, Header, Modal } from 'semantic-ui-react'
 import axios from 'axios';
 
 export class DeleteConfirm extends Component {
@@ -9,7 +9,7 @@ export class DeleteConfirm extends Component {
         super(props);
         this.state = {
             modalOpen: false,
-            customer: (this.props.customer != null) ? this.props.customer : { name: "", adress: "" }
+            item: (this.props.item != null) ? this.props.item : {}
         }
     }
 
@@ -17,14 +17,14 @@ export class DeleteConfirm extends Component {
     handleClose = () => this.setState({ modalOpen: false })
 
     cancelHandler = () => {
-        this.setState({ customer: this.props.customer, modalOpen: false });
+        this.setState({ item: this.props.item, modalOpen: false });
     }
 
     confirmHandler = (e) => {
 
-        axios.delete('/api/Customer/' + this.state.customer.id).then((res) => {
+        axios.delete('/api/'+this.props.model +'/'+ this.state.item.id).then((res) => {
             this.handleClose();
-            this.props.deleteHandler(this.state.customer.id);
+            this.props.deleteHandler(this.state.item.id);
         })
 
     }
@@ -56,5 +56,7 @@ export class DeleteConfirm extends Component {
 }
 
 DeleteConfirm.propTypes = {
-    deleteHandler: PropTypes.func
+    deleteHandler: PropTypes.func,
+    model: PropTypes.string,
+    item: PropTypes.object
 }
