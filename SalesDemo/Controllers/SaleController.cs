@@ -27,7 +27,7 @@ namespace SalesDemo.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Sale>>> Get()
+        public async Task<ActionResult<SaleViewModel>> Get()
         {
             var sales = await _context.Sales
                 .Include(s => s.Customer)
@@ -37,11 +37,22 @@ namespace SalesDemo.Controllers
             var customers = await _context.Customers.ToListAsync();
             var products = await _context.Products.ToListAsync();
             var stores = await _context.Stores.ToListAsync();
+
             if (sales.Count == 0)
             {
                 sales.Add(new Sale());
             }
-            return sales;
+
+            var viewModel = new SaleViewModel()
+            {
+                Sales = sales,
+                Customers = customers,
+                Products = products,
+                Stores = stores
+            };
+
+
+            return viewModel;
         }
 
 
