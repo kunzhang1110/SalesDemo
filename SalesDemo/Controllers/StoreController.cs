@@ -20,24 +20,24 @@ namespace SalesDemo.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Store>>> Get()
         {
-            var Stores = await _context.Stores.ToListAsync();
-            if (Stores.Count == 0)
+            var stores = await _context.Stores.ToListAsync();
+            if (stores.Count == 0)
             {
-                Stores.Add(new Store());
+                stores.Add(new Store());
             }
-            return Stores;
+            return stores;
         }
 
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Store>> Get(int id)
         {
-            var Store = await _context.Stores.Where(c => c.Id == id).SingleOrDefaultAsync();
-            if (Store == null)
+            var store = await _context.Stores.Where(c => c.Id == id).SingleOrDefaultAsync();
+            if (store == null)
             {
                 return NotFound();
             }
-            return Store;
+            return store;
         }
 
         // POST api/<controller>
@@ -63,15 +63,15 @@ namespace SalesDemo.Controllers
                 return BadRequest();
             }
 
-            var StoreInDb = await _context.Stores.Where(c => c.Id == id).SingleOrDefaultAsync();
-            if (StoreInDb == null)
+            var storeInDb = await _context.Stores.Where(c => c.Id == id).SingleOrDefaultAsync();
+            if (storeInDb == null)
             {
                 return NotFound();
             }
 
-            StoreInDb.Name = Store.Name;
-            StoreInDb.Address = Store.Address;
-            StoreInDb.Sale = Store.Sale;
+            storeInDb.Name = Store.Name;
+            storeInDb.Address = Store.Address;
+            storeInDb.Sale = Store.Sale;
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -81,8 +81,8 @@ namespace SalesDemo.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Store>> Delete(int id)
         {
-            var Store = await _context.Stores.Where(c => c.Id == id).SingleOrDefaultAsync();
-            _context.Stores.Remove(Store);
+            var store = await _context.Stores.Where(c => c.Id == id).SingleOrDefaultAsync();
+            _context.Stores.Remove(store);
             await _context.SaveChangesAsync();
             return NoContent();
         }

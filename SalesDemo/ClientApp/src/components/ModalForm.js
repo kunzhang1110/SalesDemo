@@ -70,7 +70,7 @@ export class ModalForm extends Component {
                     <Modal.Description>
                         <Form onSubmit={this.submitHandler}>
                             {Object.keys(this.state.item).map(name => {
-                                if (name !== "id" && name !== "sale") {
+                                if (!name.includes("Id") && name !== "sale" && name!=="id") {
                                     return (
                                         <Form.Field key={name}>
                                             <label>{Capitalize(name)}</label>

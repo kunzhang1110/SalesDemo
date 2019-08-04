@@ -51,12 +51,12 @@ export class ModelPage extends Component {
                     <Table.Header>
                         <Table.Row>
                             {Object.keys(dataSet[0]).map(fieldName => {
-                                if (fieldName !== "id" && fieldName !== "sale")
+                                if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName!=="id")
                                     return (<Table.HeaderCell key={`${this.props.model}-${fieldName}`}> { Capitalize(fieldName) }</Table.HeaderCell>)
                 })}
 
                             <Table.HeaderCell>Edit</Table.HeaderCell>
-                            <Table.HeaderCell>DELETE</Table.HeaderCell>
+                            <Table.HeaderCell>Delete</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>

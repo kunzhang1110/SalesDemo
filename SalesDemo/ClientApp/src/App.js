@@ -14,6 +14,7 @@ export default class App extends Component {
             <Route exact path="/Customer" component={() => <ModelPage model="Customer" />} />
             <Route exact path="/Product" component={() => <ModelPage model="Product" />} />
             <Route exact path="/Store" component={() => <ModelPage model="Store" />} />
+            <Route exact path="/Sale" component={() => <ModelPage model="Sale" />} />
       </div>
     );
   }

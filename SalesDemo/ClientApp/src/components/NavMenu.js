@@ -13,6 +13,8 @@ export class NavMenu extends Component {
               <NavLink to="/Product">Product</NavLink>
                 |
               <NavLink to="/Store">Store</NavLink>
+                |
+              <NavLink to="/Sale">Sale</NavLink>
             </>
         );
     }
