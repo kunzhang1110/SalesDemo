@@ -10,36 +10,46 @@ export class ModalForm extends Component {
         super(props);
         this.state = {
             modalOpen: false,
-            item: this.props.item != null ? this.props.item : {}
+            item: Object.assign({},props.item),
         }
+        if (props.isEdit === false) {
+            this.setItemToEmpty();
+        }
+   
+    }
 
+    setItemToEmpty = () => {
+  
+        Object.keys(this.props.item).map(name => {//clear item values
+            this.state.item[name] = "";
+        });
+        
     }
 
     handleOpen = () => this.setState({ modalOpen: true })
     handleClose = () => this.setState({ modalOpen: false })
 
     cancelHandler = () => {
-        this.setState({ item: this.props.item, modalOpen: false });
+        if (this.props.isEdit == false) {
+            this.setItemToEmpty();
+        } else {
+            this.setState({ item: this.props.item, modalOpen: false });
+        }
     }
 
     submitHandler = (e) => {
         if (this.props.isEdit) {//if editing
-            axios.put('/api/' + this.props.model + '/' + this.state.item.id, {
-                name: this.state.item.name,
-                address: this.state.item.address
-            }).then((res) => {
+            axios.put('/api/' + this.props.model + '/' + this.state.item.id, this.state.item).then((res) => {
                 this.handleClose();
                 this.props.editHandler(this.state.item);
             })
         } else {//if creating
-
-            axios.post('/api/' + this.props.model, {
-                name: this.state.item.name,
-                address: this.state.item.address
-            }).then((res) => {
+            const { id, ...data } = this.state.item;
+            axios.post('/api/' + this.props.model, data).then((res) => {
 
                 this.handleClose();
                 this.props.createHandler(res.data);
+                this.setItemToEmpty();
             })
         }
     }
@@ -66,11 +76,12 @@ export class ModalForm extends Component {
                                             <label>{Capitalize(name)}</label>
                                             <Form.Input
                                                 name={name}
-                                                value={this.props.isEdit?this.state.item[name]:""}
+                                                value={this.state.item[name]}
                                                 onChange={this.changeHandler} />
                                         </Form.Field>
                                     )
                                 }
+                                return;
                             })}
                             <Button type='submit' color="green">Submit</Button>
                             <Button onClick={this.cancelHandler}>Cancel</Button>
@@ -86,5 +97,6 @@ export class ModalForm extends Component {
 ModalForm.propTypes = {
     item: PropTypes.object,
     editHandler: PropTypes.func,
-    isEdit: PropTypes.bool
+    isEdit: PropTypes.bool,
+    model: PropTypes.string
 }

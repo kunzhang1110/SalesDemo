@@ -10,8 +10,10 @@ export default class App extends Component {
     return (
         <div>
             <NavMenu />
-            <Route exact path="/" component={() => <ModelPage model="Customer"/>} />
-            <Route exact path="/Customer" component={() => <ModelPage model="Customer"/>}  />
+            <Route exact path="/" component={() => <ModelPage model="Product"/>} />
+            <Route exact path="/Customer" component={() => <ModelPage model="Customer" />} />
+            <Route exact path="/Product" component={() => <ModelPage model="Product" />} />
+            <Route exact path="/Store" component={() => <ModelPage model="Store" />} />
       </div>
     );
   }

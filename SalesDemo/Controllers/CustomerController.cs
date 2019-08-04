@@ -20,7 +20,12 @@ namespace SalesDemo.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> Get()
         {
-            return await _context.Customers.ToListAsync();
+            var customers = await _context.Customers.ToListAsync();
+            if (customers.Count == 0)
+            {
+                customers.Add(new Customer());
+            }
+            return customers;
         }
 
         // GET api/<controller>/5
