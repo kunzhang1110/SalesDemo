@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Table } from 'semantic-ui-react';
-import { ModalForm } from './ModalForm';
+import { Table, Dropdown } from 'semantic-ui-react';
+import { SaleForm } from './SaleForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
-import { Capitalize} from '../utils'
+import { Capitalize, formatDateToString } from "../utils"
 
 export class SalePage extends Component {
 
@@ -12,18 +12,41 @@ export class SalePage extends Component {
         this.state = { dataSet: [] };
     }
 
+    createOptionArray = (data) => {
+        let options = data.map(c => {
+            return {
+                key: c.id,
+                value: c.id,
+                text: c.name
+            }
+        })
+        options.sort((a, b) => {
+            if (a.text < b.text) { return -1; }
+            if (a.text > b.text) { return 1; }
+            return 0;
+        });
+        return options;
+    }
+
     getData = () => {
         fetch('/api/' + this.props.model)
             .then(
                 response => response.json())
             .then(data => {
-                this.setState({ dataSet: data });
-            });
+
+                this.setState({
+                    dataSet: data.sales,
+                    customerOptions: this.createOptionArray(data.customers),
+                    productOptions: this.createOptionArray(data.products),
+                    storeOptions: this.createOptionArray(data.stores),
+                });
+            }).catch(e=>
+                console.log(e)
+            );
 
     }
 
     componentDidMount() {
-
         this.getData();
     }
 
@@ -35,8 +58,9 @@ export class SalePage extends Component {
         this.setState({ dataSet });
     }
 
-    createHandler = (createdItem) => {
-        this.setState({ dataSet: [...this.state.dataSet, createdItem] })
+    createHandler = (createdItem) => {//createdItem from the server
+        this.setState({ dataSet: [...this.state.dataSet, createdItem ]})
+       
     }
 
     deleteHandler = (id) => {
@@ -51,9 +75,9 @@ export class SalePage extends Component {
                     <Table.Header>
                         <Table.Row>
                             {Object.keys(dataSet[0]).map(fieldName => {
-                                if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName!=="id")
-                                    return (<Table.HeaderCell key={`${this.props.model}-${fieldName}`}> { Capitalize(fieldName) }</Table.HeaderCell>)
-                })}
+                                if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName !== "id")
+                                    return (<Table.HeaderCell key={`${this.props.model}-${fieldName}`}> {Capitalize(fieldName)}</Table.HeaderCell>)
+                            })}
 
                             <Table.HeaderCell>Edit</Table.HeaderCell>
                             <Table.HeaderCell>Delete</Table.HeaderCell>
@@ -62,27 +86,31 @@ export class SalePage extends Component {
                     <Table.Body>
                         {
                             dataSet.map(item => {
-                                if (item.name != null)
-                                return (
+                                if (item.customerId != null)
+                                    return (
+                                        <Table.Row key={item.id}>
+                                            <Table.Cell>{formatDateToString(new Date(item.dateSold))}</Table.Cell>
+                                            <Table.Cell>{item.customer.name}</Table.Cell>
+                                            <Table.Cell>{item.product.name}</Table.Cell>
+                                            <Table.Cell> {item.store.name}</Table.Cell>
+                                            <Table.Cell>
+                                                <SaleForm
+                                                    createHandler={this.createHandler}
+                                                    model={this.props.model}
+                                                    isEdit={true}
+                                                    item={this.state.dataSet[0]}
+                                                    customerOptions={this.state.customerOptions}
+                                                    productOptions={this.state.productOptions}
+                                                    storeOptions={this.state.storeOptions}
+                                                />
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                <DeleteConfirm item={item} model={this.props.model} deleteHandler={this.deleteHandler} />
+                                            </Table.Cell>
+                                        </Table.Row>
 
-                                    <Table.Row key={item.id}>
-                                        {Object.keys(item).map(k => {
-                                            if(k!=="id" && k!=="sale")
-                                            return (
-                                                <Table.Cell key={`${this.props.model}-${item.id}-${k}`}>{item[k]}</Table.Cell>
-                                            )
-                                        })
-                                        }
-                                        <Table.Cell>
-                                            <ModalForm item={item} editHandler={this.editHandler} model={this.props.model} isEdit={true} />
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            <DeleteConfirm item={item} model={this.props.model} deleteHandler={this.deleteHandler} />
-                                        </Table.Cell>
-                                    </Table.Row>
-                                )
+                                    )
                             })
-                          
                         }
                     </Table.Body>
 
@@ -92,16 +120,24 @@ export class SalePage extends Component {
     }
 
     render() {
-        //{ console.log(this.state.dataSet); debugger;}
         return (
             <div>
-                {this.state.dataSet.length > 0 ? <ModalForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
+                {this.state.dataSet.length > 0
+                    ? <SaleForm
+                        createHandler={this.createHandler}
+                        model={this.props.model}
+                        isEdit={false}
+                        item={this.state.dataSet[0]}
+                        customerOptions={this.state.customerOptions}
+                        productOptions={this.state.productOptions}
+                        storeOptions={this.state.storeOptions}
+
+                    />
+            : null}
                 {this.renderDataTable(this.state.dataSet)}
             </div>
         );
     }
 }
 
-ModelPage.propTypes = {
-    model: PropTypes.string
-}
+

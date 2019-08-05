@@ -4,7 +4,7 @@ import { Button, Modal, Form } from 'semantic-ui-react'
 import axios from 'axios';
 import { Capitalize } from "../utils"
 
-export class ModalForm extends Component {
+export class ModelForm extends Component {
 
     constructor(props) {
         super(props);
@@ -94,7 +94,7 @@ export class ModalForm extends Component {
     }
 }
 
-ModalForm.propTypes = {
+ModelForm.propTypes = {
     item: PropTypes.object,
     editHandler: PropTypes.func,
     isEdit: PropTypes.bool,

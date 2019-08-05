@@ -59,7 +59,12 @@ namespace SalesDemo.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Sale>> Get(int id)
         {
-            var sale = await _context.Sales.Where(c => c.Id == id).SingleOrDefaultAsync();
+            var sale = await _context.Sales
+                .Where(s => s.Id == id)
+                .Include(s => s.Customer)
+                .Include(s => s.Product)
+                .Include(s => s.Store)
+                .SingleOrDefaultAsync();
             if (sale == null)
             {
                 return NotFound();
@@ -69,16 +74,18 @@ namespace SalesDemo.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<ActionResult<Sale>> Post([FromBody]Sale Sale)
+        public async Task<ActionResult<Sale>> Post([FromBody]Sale sale)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
-            _context.Sales.Add(Sale);
+            _context.Sales.Add(sale);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Sale), Sale);
-
+            _context.Entry(sale).Reference(s => s.Customer).Load();
+            _context.Entry(sale).Reference(s => s.Product).Load();
+            _context.Entry(sale).Reference(s => s.Store).Load();
+            return CreatedAtAction(nameof(Sale), sale);
         }
 
         // PUT api/<controller>/5

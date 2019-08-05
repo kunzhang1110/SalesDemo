@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react';
-import { ModalForm } from './ModalForm';
+import { ModelForm } from './ModelForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
 import { Capitalize} from '../utils'
@@ -74,7 +74,7 @@ export class ModelPage extends Component {
                                         })
                                         }
                                         <Table.Cell>
-                                            <ModalForm item={item} editHandler={this.editHandler} model={this.props.model} isEdit={true} />
+                                            <ModelForm item={item} editHandler={this.editHandler} model={this.props.model} isEdit={true} />
                                         </Table.Cell>
                                         <Table.Cell>
                                             <DeleteConfirm item={item} model={this.props.model} deleteHandler={this.deleteHandler} />
@@ -95,7 +95,7 @@ export class ModelPage extends Component {
         //{ console.log(this.state.dataSet); debugger;}
         return (
             <div>
-                {this.state.dataSet.length > 0 ? <ModalForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
+                {this.state.dataSet.length > 0 ? <ModelForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
                 {this.renderDataTable(this.state.dataSet)}
             </div>
         );

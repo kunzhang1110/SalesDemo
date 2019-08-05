@@ -1,0 +1,3 @@
+#ToDo
+1. Input Validation
+1. Color, Style ... 

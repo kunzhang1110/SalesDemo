@@ -33,6 +33,9 @@ namespace SalesDemo
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().AddJsonOptions(//avoid Json References Loop
+                            options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,8 +61,6 @@ namespace SalesDemo
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
-
-
 
 
             app.UseSpa(spa =>
