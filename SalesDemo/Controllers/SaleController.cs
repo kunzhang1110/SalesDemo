@@ -90,6 +90,7 @@ namespace SalesDemo.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
+
         public async Task<ActionResult<Sale>> Put(int id, [FromBody]Sale Sale)
         {
             if (!ModelState.IsValid)

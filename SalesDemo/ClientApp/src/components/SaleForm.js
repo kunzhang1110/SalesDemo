@@ -2,7 +2,7 @@
 import PropTypes from "prop-types";
 import { Button, Modal, Form, Dropdown } from 'semantic-ui-react'
 import axios from 'axios';
-import { Capitalize, formatDateToString } from "../utils"
+import {  formatDateToString } from "../utils"
 
 export class SaleForm extends Component {
 
@@ -10,27 +10,49 @@ export class SaleForm extends Component {
         super(props);
         this.state = {
             modalOpen: false,
-            item: Object.assign({},props.item),
+            item: Object.assign({}, props.item),
         }
-        if (this.props.isEdit == false) {
-            this.state.item.dateSold = formatDateToString(new Date());//default current date
-        } else {
-            this.state.item.dateSold = formatDateToString(new Date(this.state.item.dateSold));//default current date
-        }
+
     }
 
+    setItemToEmpty() {
+        var item = {};
+        Object.keys(this.state.item).map(key => {
+            if (key === "dateSold") {
+                item[key] = new Date();//default current date
+            }
+            else {
+                item[key] = "";
+            }
+        });
+        this.setState({ item: item });
+    }
+
+    componentDidMount() {
+        if (this.props.isEdit == false) {
+            this.setItemToEmpty();
+        }
+        else {
+            this.setState({
+                item: {
+                    ...this.state.item,
+                    dateSold: new Date(this.state.item.dateSold)
+                }
+            })
+        }
+    }
 
     handleOpen = () => this.setState({ modalOpen: true })
     handleClose = () => this.setState({ modalOpen: false })
 
     cancelHandler = () => {
-            this.setState({ item: this.props.item, modalOpen: false });
+        this.setState({ item: this.props.item, modalOpen: false });
     }
 
     submitHandler = () => {
-
+        const { customer, product, store, ...data } = this.state.item;
         if (this.props.isEdit) {//if editing
-            axios.put('/api/' + this.props.model + '/' + this.state.item.id, this.state.item).then((res) => {
+            axios.put('/api/' + this.props.model + '/' + this.state.item.id, data).then((res) => {
                 this.handleClose();
                 this.props.editHandler(this.state.item);
             })
@@ -74,6 +96,7 @@ export class SaleForm extends Component {
                                     search
                                     selection
                                     name="customerId"
+                                    value={this.state.item.customerId}
                                     onChange={this.changeHandler}
                                     options={this.props.customerOptions}
                                 />
@@ -86,6 +109,7 @@ export class SaleForm extends Component {
                                     fluid
                                     search
                                     selection
+                                    value={this.state.item.productId}
                                     onChange={this.changeHandler}
                                     options={this.props.productOptions}
                                 />
@@ -98,12 +122,13 @@ export class SaleForm extends Component {
                                     fluid
                                     search
                                     selection
+                                    value={this.state.item.storeId}
                                     onChange={this.changeHandler}
                                     options={this.props.storeOptions}
                                 />
                             </Form.Field>
                             <Button type='submit' color="green">Submit</Button>
-                            <Button onClick={this.cancelHandler}>Cancel</Button>                      
+                            <Button onClick={this.cancelHandler}>Cancel</Button>
                         </Form>
                     </Modal.Description>
                 </Modal.Content>

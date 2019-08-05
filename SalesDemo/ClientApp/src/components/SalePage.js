@@ -9,7 +9,7 @@ export class SalePage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { dataSet: [] };
+        this.state = { dataSet: [] ,fields:[]};
     }
 
     createOptionArray = (data) => {
@@ -33,12 +33,13 @@ export class SalePage extends Component {
             .then(
                 response => response.json())
             .then(data => {
-
+                var fields = Object.keys(data.sales[0]);
                 this.setState({
                     dataSet: data.sales,
                     customerOptions: this.createOptionArray(data.customers),
                     productOptions: this.createOptionArray(data.products),
                     storeOptions: this.createOptionArray(data.stores),
+                    fields:fields
                 });
             }).catch(e=>
                 console.log(e)
@@ -68,13 +69,13 @@ export class SalePage extends Component {
         this.setState({ dataSet });
     }
 
-    renderDataTable(dataSet) {
-        if (dataSet.length > 0) {
+    renderDataTable(dataSet, fields) {
+        if (fields.length > 0) {
             return (
                 <Table celled>
                     <Table.Header>
                         <Table.Row>
-                            {Object.keys(dataSet[0]).map(fieldName => {
+                            {fields.map(fieldName => {
                                 if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName !== "id")
                                     return (<Table.HeaderCell key={`${this.props.model}-${fieldName}`}> {Capitalize(fieldName)}</Table.HeaderCell>)
                             })}
@@ -86,16 +87,16 @@ export class SalePage extends Component {
                     <Table.Body>
                         {
                             dataSet.map(item => {
-                                if (item.customerId != null)
+                                if (item.customer != null)
                                     return (
                                         <Table.Row key={item.id}>
-                                            <Table.Cell>{formatDateToString(new Date(item.dateSold))}</Table.Cell>
+                                            <Table.Cell>{new Date(item.dateSold).toDateString}</Table.Cell>
                                             <Table.Cell>{item.customer.name}</Table.Cell>
                                             <Table.Cell>{item.product.name}</Table.Cell>
                                             <Table.Cell> {item.store.name}</Table.Cell>
                                             <Table.Cell>
                                                 <SaleForm
-                                                    createHandler={this.createHandler}
+                                                    editHandler={this.editHandler}
                                                     model={this.props.model}
                                                     isEdit={true}
                                                     item={this.state.dataSet[0]}
@@ -134,7 +135,7 @@ export class SalePage extends Component {
 
                     />
             : null}
-                {this.renderDataTable(this.state.dataSet)}
+                {this.renderDataTable(this.state.dataSet, this.state.fields)}
             </div>
         );
     }

@@ -9,7 +9,7 @@ export class ModelPage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { dataSet: [] };
+        this.state = { dataSet: [] , fields:[]};
     }
 
     getData = () => {
@@ -17,7 +17,8 @@ export class ModelPage extends Component {
             .then(
                 response => response.json())
             .then(data => {
-                this.setState({ dataSet: data });
+                var fields = Object.keys(data[0]);
+                this.setState({ dataSet: data , fields:fields});
             });
 
     }
@@ -44,16 +45,16 @@ export class ModelPage extends Component {
         this.setState({ dataSet });
     }
 
-    renderDataTable(dataSet) {
-        if (dataSet.length > 0) {
+    renderDataTable(dataSet, fields) {
+        if (fields.length > 0 ) {
             return (
                 <Table celled>
                     <Table.Header>
                         <Table.Row>
-                            {Object.keys(dataSet[0]).map(fieldName => {
+                            {fields.map(fieldName => {
                                 if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName!=="id")
                                     return (<Table.HeaderCell key={`${this.props.model}-${fieldName}`}> { Capitalize(fieldName) }</Table.HeaderCell>)
-                })}
+                               })}
 
                             <Table.HeaderCell>Edit</Table.HeaderCell>
                             <Table.HeaderCell>Delete</Table.HeaderCell>
@@ -64,7 +65,6 @@ export class ModelPage extends Component {
                             dataSet.map(item => {
                                 if (item.name != null)
                                 return (
-
                                     <Table.Row key={item.id}>
                                         {Object.keys(item).map(k => {
                                             if(k!=="id" && k!=="sale")
@@ -95,8 +95,8 @@ export class ModelPage extends Component {
         //{ console.log(this.state.dataSet); debugger;}
         return (
             <div>
-                {this.state.dataSet.length > 0 ? <ModelForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
-                {this.renderDataTable(this.state.dataSet)}
+                {this.state.fields.length > 0 ? <ModelForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
+                {this.renderDataTable(this.state.dataSet, this.state.fields)}
             </div>
         );
     }
