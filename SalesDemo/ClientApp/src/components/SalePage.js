@@ -39,6 +39,9 @@ export class SalePage extends Component {
                     customerOptions: this.createOptionArray(data.customers),
                     productOptions: this.createOptionArray(data.products),
                     storeOptions: this.createOptionArray(data.stores),
+                    customers: data.customers,
+                    products: data.products,
+                    stores: data.stores,
                     fields:fields
                 });
             }).catch(e=>
@@ -53,6 +56,7 @@ export class SalePage extends Component {
 
 
     editHandler = (edittedItem) => {
+        console.log(edittedItem)
         const dataSet = this.state.dataSet.map(c => {
             return (c.id === edittedItem.id) ? edittedItem : c;
         });
@@ -91,15 +95,15 @@ export class SalePage extends Component {
                                     return (
                                         <Table.Row key={item.id}>
                                             <Table.Cell>{item.dateSold}</Table.Cell>
-                                            <Table.Cell>{item.customer.name}</Table.Cell>
-                                            <Table.Cell>{item.product.name}</Table.Cell>
-                                            <Table.Cell> {item.store.name}</Table.Cell>
+                                            <Table.Cell>{this.state.customers.find((e)=>e.id==item.customerId).name}</Table.Cell>
+                                            <Table.Cell>{this.state.products.find((e) => e.id == item.productId).name}</Table.Cell>
+                                            <Table.Cell> {this.state.stores.find((e) => e.id == item.storeId).name}</Table.Cell>
                                             <Table.Cell>
                                                 <SaleForm
                                                     editHandler={this.editHandler}
                                                     model={this.props.model}
                                                     isEdit={true}
-                                                    item={this.state.dataSet[0]}
+                                                    item={item}
                                                     customerOptions={this.state.customerOptions}
                                                     productOptions={this.state.productOptions}
                                                     storeOptions={this.state.storeOptions}
@@ -123,7 +127,7 @@ export class SalePage extends Component {
     render() {
         return (
             <div>
-                {this.state.dataSet.length > 0
+                {this.state.fields.length > 0
                     ? <SaleForm
                         createHandler={this.createHandler}
                         model={this.props.model}

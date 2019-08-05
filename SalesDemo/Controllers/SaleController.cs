@@ -30,9 +30,6 @@ namespace SalesDemo.Controllers
         public async Task<ActionResult<SaleViewModel>> Get()
         {
             var sales = await _context.Sales
-                .Include(s => s.Customer)
-                .Include(s => s.Product)
-                .Include(s => s.Store)
                 .ToListAsync();
             var customers = await _context.Customers.ToListAsync();
             var products = await _context.Products.ToListAsync();
@@ -104,10 +101,10 @@ namespace SalesDemo.Controllers
                 return NotFound();
             }
 
-            saleInDb.Customer = Sale.Customer;
-            saleInDb.Product = Sale.Product;
+            saleInDb.CustomerId = Sale.CustomerId;
+            saleInDb.ProductId = Sale.ProductId;
             saleInDb.DateSold = Sale.DateSold;
-            saleInDb.Store = Sale.Store;
+            saleInDb.StoreId = Sale.StoreId;
 
             await _context.SaveChangesAsync();
             return NoContent();
