@@ -19,7 +19,7 @@ export class SaleForm extends Component {
         var item = {};
         Object.keys(this.state.item).map(key => {
             if (key === "dateSold") {
-                item[key] = new Date();//default current date
+                item[key] = formatDateToString(new Date());//default current date
             }
             else {
                 item[key] = "";
@@ -36,7 +36,7 @@ export class SaleForm extends Component {
             this.setState({
                 item: {
                     ...this.state.item,
-                    dateSold: new Date(this.state.item.dateSold)
+                    dateSold: formatDateToString(new Date(this.state.item.dateSold))
                 }
             })
         }

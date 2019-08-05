@@ -90,7 +90,7 @@ export class SalePage extends Component {
                                 if (item.customer != null)
                                     return (
                                         <Table.Row key={item.id}>
-                                            <Table.Cell>{new Date(item.dateSold).toDateString}</Table.Cell>
+                                            <Table.Cell>{item.dateSold}</Table.Cell>
                                             <Table.Cell>{item.customer.name}</Table.Cell>
                                             <Table.Cell>{item.product.name}</Table.Cell>
                                             <Table.Cell> {item.store.name}</Table.Cell>
