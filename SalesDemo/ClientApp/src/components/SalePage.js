@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash'
 import { Table, Dropdown } from 'semantic-ui-react';
 import { SaleForm } from './SaleForm';
 import { DeleteConfirm } from './DeleteConfirm';
@@ -9,7 +10,12 @@ export class SalePage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { dataSet: [] ,fields:[]};
+        this.state = {
+            dataSet: [],
+            fields: [],
+            column: null,
+            direction: null
+        };
     }
 
     createOptionArray = (data) => {
@@ -73,15 +79,40 @@ export class SalePage extends Component {
         this.setState({ dataSet });
     }
 
+    sortHandler = (clickedColumn) => () => {
+        const { column, dataSet, direction } = this.state
+
+        if (column !== clickedColumn) {
+            this.setState({
+                column: clickedColumn,
+                dataSet: _.sortBy(dataSet, [clickedColumn]),
+                direction: 'ascending',
+            })
+
+            return
+        }
+        this.setState({
+            dataSet: dataSet.reverse(),
+            direction: direction === 'ascending' ? 'descending' : 'ascending',
+        })
+    }
+
     renderDataTable(dataSet, fields) {
+        const { column, direction } = this.state;
         if (fields.length > 0) {
             return (
-                <Table celled>
+                <Table celled sortable fixed>
                     <Table.Header>
                         <Table.Row>
                             {fields.map(fieldName => {
                                 if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName !== "id")
-                                    return (<Table.HeaderCell key={`${this.props.model}-${fieldName}`}> {Capitalize(fieldName)}</Table.HeaderCell>)
+                                    return (
+                                        <Table.HeaderCell
+                                            key={`${this.props.model}-${fieldName}`}
+                                            sorted={column === fieldName ? direction : null}
+                                            onClick={this.sortHandler(fieldName)}>
+                                                               {Capitalize(fieldName)}
+                                        </Table.HeaderCell>)
                             })}
 
                             <Table.HeaderCell>Edit</Table.HeaderCell>
