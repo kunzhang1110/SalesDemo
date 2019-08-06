@@ -23,7 +23,7 @@ namespace SalesDemo
         {
             //Use Connection String to new ApplicationDbContext and inject
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("Default")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
