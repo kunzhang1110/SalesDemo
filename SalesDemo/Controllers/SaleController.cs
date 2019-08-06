@@ -58,9 +58,6 @@ namespace SalesDemo.Controllers
         {
             var sale = await _context.Sales
                 .Where(s => s.Id == id)
-                .Include(s => s.Customer)
-                .Include(s => s.Product)
-                .Include(s => s.Store)
                 .SingleOrDefaultAsync();
             if (sale == null)
             {
@@ -69,7 +66,6 @@ namespace SalesDemo.Controllers
             return sale;
         }
 
-        // POST api/<controller>
         [HttpPost]
         public async Task<ActionResult<Sale>> Post([FromBody]Sale sale)
         {
@@ -85,7 +81,6 @@ namespace SalesDemo.Controllers
             return CreatedAtAction(nameof(Sale), sale);
         }
 
-        // PUT api/<controller>/5
         [HttpPut("{id}")]
 
         public async Task<ActionResult<Sale>> Put(int id, [FromBody]Sale Sale)
@@ -110,7 +105,6 @@ namespace SalesDemo.Controllers
             return NoContent();
         }
 
-        // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Sale>> Delete(int id)
         {

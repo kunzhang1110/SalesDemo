@@ -1,8 +1,8 @@
 ﻿import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Modal, Form, Dropdown } from 'semantic-ui-react'
+import { Button, Modal, Form, Dropdown, Label } from 'semantic-ui-react'
 import axios from 'axios';
-import {  formatDateToString } from "../utils"
+import {  Capitalize, formatDateToString } from "../utils"
 
 export class SaleForm extends Component {
 
@@ -11,9 +11,10 @@ export class SaleForm extends Component {
         this.state = {
             modalOpen: false,
             item: Object.assign({}, props.item),
+            errors: {}
         }
 
-    }
+    } 
 
     setItemToEmpty() {
         var item = {};
@@ -25,7 +26,7 @@ export class SaleForm extends Component {
                 item[key] = "";
             }
         });
-        this.setState({ item: item });
+        this.setState({ item: item, modalOpen: false});
     }
 
     componentDidMount() {
@@ -42,14 +43,41 @@ export class SaleForm extends Component {
         }
     }
 
+    validate = () => {
+        const errors = {};
+     
+        Object.keys(this.state.item).map(key => {
+            if (key === "dateSold" || key === "customerId" || key === "productId" || key === "storeId"  ) {
+                if (this.state.item[key].trim() === "") {
+                    let fieldname = Capitalize(key.replace(/Id$/, x => "")); //remove xxxId's Id part from field name
+                    errors[key] = `${fieldname} is required.`;
+                }
+            }
+        })
+        return Object.keys(errors).length === 0 ? null : errors;
+
+    }
+
     handleOpen = () => this.setState({ modalOpen: true })
     handleClose = () => this.setState({ modalOpen: false })
 
     cancelHandler = () => {
-        this.setState({ item: this.props.item, modalOpen: false });
+        if (this.props.isEdit===false) {
+            this.setItemToEmpty();
+
+        } else {
+            this.setState({ item: this.props.item, modalOpen: false });
+        }
     }
 
     submitHandler = () => {
+        let errors = this.validate();
+        if (errors) {
+            this.setState({ errors })
+            return;
+        }
+
+
         const { customer, product, store, ...data } = this.state.item;
         if (this.props.isEdit) {//if editing
             axios.put('/api/' + this.props.model + '/' + this.state.item.id, data).then((res) => {
@@ -85,6 +113,7 @@ export class SaleForm extends Component {
                                 <label>Date Sold</label>
                                 <Form.Input
                                     name="dateSold"
+                                    error={this.state.errors.dateSold}
                                     value={this.state.item["dateSold"]}
                                     onChange={this.changeHandler} />
                             </Form.Field>
@@ -96,10 +125,14 @@ export class SaleForm extends Component {
                                     search
                                     selection
                                     name="customerId"
+                                    error={this.state.errors.customerId != null}
                                     value={this.state.item.customerId}
                                     onChange={this.changeHandler}
                                     options={this.props.customerOptions}
                                 />
+                                {this.state.errors.customerId
+                                    ? <Label pointing prompt>{this.state.errors.customerId}</Label>
+                                    :null}
                             </Form.Field>
                             <Form.Field>
                                 <label>Product</label>
@@ -109,10 +142,14 @@ export class SaleForm extends Component {
                                     fluid
                                     search
                                     selection
+                                    error={this.state.errors.productId!=null}
                                     value={this.state.item.productId}
                                     onChange={this.changeHandler}
                                     options={this.props.productOptions}
                                 />
+                                {this.state.errors.productId
+                                    ? <Label pointing prompt>{this.state.errors.productId}</Label>
+                                    : null}
                             </Form.Field>
                             <Form.Field>
                                 <label>Store</label>
@@ -122,10 +159,14 @@ export class SaleForm extends Component {
                                     fluid
                                     search
                                     selection
+                                    error={this.state.errors.storeId!=null}
                                     value={this.state.item.storeId}
                                     onChange={this.changeHandler}
                                     options={this.props.storeOptions}
                                 />
+                                {this.state.errors.storeId
+                                    ? <Label pointing prompt>{this.state.errors.storeId}</Label>
+                                    : null}
                             </Form.Field>
                             <Button type='submit' color="green">Submit</Button>
                             <Button onClick={this.cancelHandler}>Cancel</Button>

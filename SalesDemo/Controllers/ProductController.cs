@@ -40,7 +40,6 @@ namespace SalesDemo.Controllers
             return product;
         }
 
-        // POST api/<controller>
         [HttpPost]
         public async Task<ActionResult<Product>> Post([FromBody]Product Product)
         {
@@ -54,7 +53,6 @@ namespace SalesDemo.Controllers
 
         }
 
-        // PUT api/<controller>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<Product>> Put(int id, [FromBody]Product Product)
         {
@@ -77,7 +75,6 @@ namespace SalesDemo.Controllers
             return NoContent();
         }
 
-        // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> Delete(int id)
         {

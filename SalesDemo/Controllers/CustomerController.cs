@@ -16,7 +16,6 @@ namespace SalesDemo.Controllers
             _context = context;
         }
 
-        // GET: api/<controller>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> Get()
         {
@@ -28,7 +27,6 @@ namespace SalesDemo.Controllers
             return customers;
         }
 
-        // GET api/<controller>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> Get(int id)
         {
@@ -40,7 +38,6 @@ namespace SalesDemo.Controllers
             return customer;
         }
 
-        // POST api/<controller>
         [HttpPost]
         public async Task<ActionResult<Customer>> Post([FromBody]Customer customer)
         {
@@ -54,7 +51,6 @@ namespace SalesDemo.Controllers
 
         }
 
-        // PUT api/<controller>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<Customer>> Put(int id, [FromBody]Customer customer)
         {
@@ -77,7 +73,6 @@ namespace SalesDemo.Controllers
             return NoContent();
         }
 
-        // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> Delete(int id)
         {

@@ -10,20 +10,25 @@ export class ModelForm extends Component {
         super(props);
         this.state = {
             modalOpen: false,
-            item: Object.assign({},props.item),
+            item: Object.assign({}, props.item),
+            errors:{}
         }
-        if (props.isEdit === false) {
-            this.setItemToEmpty();
-        }
+
    
     }
 
     setItemToEmpty = () => {
-  
+        let blankItem = {};
         Object.keys(this.props.item).map(name => {//clear item values
-            this.state.item[name] = "";
+            blankItem[name] = "";
         });
-        
+        this.setState({ item: blankItem, modalOpen: false });
+    }
+
+    componentDidMount() {
+        if (this.props.isEdit === false) {
+            this.setItemToEmpty();
+        }
     }
 
     handleOpen = () => this.setState({ modalOpen: true })
@@ -37,7 +42,28 @@ export class ModelForm extends Component {
         }
     }
 
+    validate = () => {
+        const errors = {};
+        Object.keys(this.state.item).map(key => {
+            if (key !== "id" && key !== "sale") {
+                if (this.state.item[key].trim() === "") {
+                    errors[key] = `${Capitalize(key)} is required.`;
+                }
+            }
+        })
+        return Object.keys(errors).length === 0 ? null : errors;
+
+    }
+
     submitHandler = (e) => {
+        e.preventDefault();
+       
+        let errors = this.validate();
+        if (errors) {
+            this.setState({ errors });
+            return;
+        }
+
         if (this.props.isEdit) {//if editing
             axios.put('/api/' + this.props.model + '/' + this.state.item.id, this.state.item).then((res) => {
                 this.handleClose();
@@ -75,6 +101,7 @@ export class ModelForm extends Component {
                                         <Form.Field key={name}>
                                             <label>{Capitalize(name)}</label>
                                             <Form.Input
+                                                error={this.state.errors[name]}
                                                 name={name}
                                                 value={this.state.item[name]}
                                                 onChange={this.changeHandler} />
