@@ -5,6 +5,7 @@ import { SaleForm } from './SaleForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
 import { Capitalize, formatDateToString } from "../utils"
+import moment from 'moment';
 
 export class SalePage extends Component {
 
@@ -68,9 +69,7 @@ export class SalePage extends Component {
         this.getData();
     }
 
-
     editHandler = (edittedItem) => {
-        console.log(edittedItem)
         const dataSet = this.state.dataSet.map(c => {
             return (c.id === edittedItem.id) ? edittedItem : c;
         });
@@ -133,10 +132,10 @@ export class SalePage extends Component {
                             if (item.customer != null)
                                 return (
                                     <Table.Row key={item.id}>
-                                        <Table.Cell>{item.dateSold}</Table.Cell>
                                         <Table.Cell>{this.state.customers.find((e) => e.id == item.customerId).name}</Table.Cell>
                                         <Table.Cell>{this.state.products.find((e) => e.id == item.productId).name}</Table.Cell>
                                         <Table.Cell> {this.state.stores.find((e) => e.id == item.storeId).name}</Table.Cell>
+                                        <Table.Cell>{moment(item.dateSold, 'MM/DD/YYYY').format("DD MMM, YYYY")}</Table.Cell>
                                         <Table.Cell>
                                             <SaleForm
                                                 editHandler={this.editHandler}

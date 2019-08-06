@@ -18,3 +18,4 @@ export const formatDateToString = (dateObject) => {
 
     return (`${month}/${date}/${dateObject.getFullYear()}`)
 }
+

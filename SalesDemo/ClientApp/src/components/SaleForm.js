@@ -1,4 +1,5 @@
 ﻿import React, { Component } from "react";
+import moment from 'moment';
 import PropTypes from "prop-types";
 import { Button, Modal, Form, Dropdown, Label ,Icon} from 'semantic-ui-react'
 import axios from 'axios';
@@ -53,6 +54,12 @@ export class SaleForm extends Component {
                     errors[key] = `${fieldname} is required.`;
                 }
             }
+            if (key === "dateSold") {
+                let m = moment(this.state.item[key], 'MM/DD/YYYY');
+                if (!m.isValid()) {
+                    errors[key] = `Invalid Date`;
+                }
+            }
         })
         return Object.keys(errors).length === 0 ? null : errors;
 
@@ -71,6 +78,7 @@ export class SaleForm extends Component {
     }
 
     submitHandler = () => {
+
         let errors = this.validate();
         if (errors) {
             this.setState({ errors })
@@ -112,7 +120,7 @@ export class SaleForm extends Component {
                 <Modal.Content>
                     <Modal.Description>
                         <Form>
-                            <Form.Field>
+                            <Form.Field width='3'>
                                 <label>Date Sold</label>
                                 <Form.Input
                                     name="dateSold"
