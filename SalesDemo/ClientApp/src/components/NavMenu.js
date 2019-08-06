@@ -12,6 +12,7 @@ export class NavMenu extends Component {
 
     render() {
         const { activeItem } = this.state;
+        console.log(activeItem)
         return (
             <Menu stackable inverted>
                 <Menu.Item
@@ -20,7 +21,7 @@ export class NavMenu extends Component {
                     active={activeItem === 'Home'}
                     onClick={this.handleItemClick}
                     as={NavLink}
-                    to="/"
+                    exact to="/"
                     content="Home"
                 />              
                 <Menu.Item

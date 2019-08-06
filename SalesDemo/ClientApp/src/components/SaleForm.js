@@ -1,6 +1,6 @@
 ﻿import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Modal, Form, Dropdown, Label } from 'semantic-ui-react'
+import { Button, Modal, Form, Dropdown, Label ,Icon} from 'semantic-ui-react'
 import axios from 'axios';
 import {  Capitalize, formatDateToString } from "../utils"
 
@@ -99,16 +99,19 @@ export class SaleForm extends Component {
     }
 
     render() {
+        const { isEdit } = this.props;
         return (
             <Modal
-                trigger={<Button onClick={this.handleOpen}> {(this.props.isEdit) ? "Edit" : "New " + this.props.model} </Button>}
+                trigger={isEdit
+                    ? <Button onClick={this.handleOpen} color='yellow'><Icon name='edit'/>Edit</Button>
+                    : <Button primary onClick={this.handleOpen}>{"New " + this.props.model}</Button>}
                 open={this.state.modalOpen}
                 onClose={this.handleClose}
             >
                 <Modal.Header>{((this.props.isEdit) ? "Edit " : "Create ") + this.props.model}</Modal.Header>
                 <Modal.Content>
                     <Modal.Description>
-                        <Form onSubmit={this.submitHandler}>
+                        <Form>
                             <Form.Field>
                                 <label>Date Sold</label>
                                 <Form.Input
@@ -168,11 +171,13 @@ export class SaleForm extends Component {
                                     ? <Label pointing prompt>{this.state.errors.storeId}</Label>
                                     : null}
                             </Form.Field>
-                            <Button type='submit' color="green">Submit</Button>
-                            <Button onClick={this.cancelHandler}>Cancel</Button>
                         </Form>
                     </Modal.Description>
                 </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.cancelHandler}>Cancel</Button>
+                    <Button onClick={this.submitHandler} type = 'submit'  color="green" icon labelPosition='right'>{isEdit ? "Edit" : "Create"} < Icon name='check' /></Button>
+                </Modal.Actions>
             </Modal>
 
         );

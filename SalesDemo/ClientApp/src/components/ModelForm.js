@@ -1,6 +1,6 @@
 ﻿import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Modal, Form } from 'semantic-ui-react'
+import { Button, Modal, Form, Icon } from 'semantic-ui-react'
 import axios from 'axios';
 import { Capitalize } from "../utils"
 
@@ -11,10 +11,10 @@ export class ModelForm extends Component {
         this.state = {
             modalOpen: false,
             item: Object.assign({}, props.item),
-            errors:{}
+            errors: {}
         }
 
-   
+
     }
 
     setItemToEmpty = () => {
@@ -57,7 +57,7 @@ export class ModelForm extends Component {
 
     submitHandler = (e) => {
         e.preventDefault();
-       
+
         let errors = this.validate();
         if (errors) {
             this.setState({ errors });
@@ -85,9 +85,12 @@ export class ModelForm extends Component {
     }
 
     render() {
+        const { isEdit } = this.props;
         return (
             <Modal
-                trigger={<Button onClick={this.handleOpen}> {(this.props.isEdit) ? "Edit" : "New " + this.props.model} </Button>}
+                trigger={isEdit
+                    ? <Button onClick={this.handleOpen} color='yellow'><Icon name='edit' />Edit</Button>
+                    : <Button primary onClick={this.handleOpen}>{"New " + this.props.model}</Button>}
                 open={this.state.modalOpen}
                 onClose={this.handleClose}
             >
@@ -96,7 +99,7 @@ export class ModelForm extends Component {
                     <Modal.Description>
                         <Form onSubmit={this.submitHandler}>
                             {Object.keys(this.state.item).map(name => {
-                                if (!name.includes("Id") && name !== "sale" && name!=="id") {
+                                if (!name.includes("Id") && name !== "sale" && name !== "id") {
                                     return (
                                         <Form.Field key={name}>
                                             <label>{Capitalize(name)}</label>
@@ -110,11 +113,14 @@ export class ModelForm extends Component {
                                 }
                                 return;
                             })}
-                            <Button type='submit' color="green">Submit</Button>
-                            <Button onClick={this.cancelHandler}>Cancel</Button>
+
                         </Form>
                     </Modal.Description>
                 </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.cancelHandler}>Cancel</Button>
+                    <Button onClick={this.submitHandler} type='submit' color="green" icon labelPosition='right'>{isEdit ? "Edit" : "Create"} < Icon name='check' /></Button>
+                </Modal.Actions>
             </Modal>
 
         );
