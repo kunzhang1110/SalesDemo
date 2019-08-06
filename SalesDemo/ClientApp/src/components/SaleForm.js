@@ -48,7 +48,7 @@ export class SaleForm extends Component {
      
         Object.keys(this.state.item).map(key => {
             if (key === "dateSold" || key === "customerId" || key === "productId" || key === "storeId"  ) {
-                if (this.state.item[key].trim() === "") {
+                if (this.state.item[key] === "") {
                     let fieldname = Capitalize(key.replace(/Id$/, x => "")); //remove xxxId's Id part from field name
                     errors[key] = `${fieldname} is required.`;
                 }
