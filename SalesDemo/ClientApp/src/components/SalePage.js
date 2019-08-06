@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
-import { Table, Dropdown } from 'semantic-ui-react';
+import { Container, Pagination, Table, Dropdown } from 'semantic-ui-react';
 import { SaleForm } from './SaleForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
@@ -14,9 +14,17 @@ export class SalePage extends Component {
             dataSet: [],
             fields: [],
             column: null,
-            direction: null
+            direction: null,
+            numberOfRow: 5,
+            currentPage: 1
         };
     }
+
+    numberOfRowOptions = [
+        { key: 5, text: 5, value: 5 },
+        { key: 10, text: 10, value: 10 },
+        { key: 15, text: 15, value: 15 },
+    ];
 
     createOptionArray = (data) => {
         let options = data.map(c => {
@@ -48,9 +56,9 @@ export class SalePage extends Component {
                     customers: data.customers,
                     products: data.products,
                     stores: data.stores,
-                    fields:fields
+                    fields: fields
                 });
-            }).catch(e=>
+            }).catch(e =>
                 console.log(e)
             );
 
@@ -70,8 +78,8 @@ export class SalePage extends Component {
     }
 
     createHandler = (createdItem) => {//createdItem from the server
-        this.setState({ dataSet: [...this.state.dataSet, createdItem ]})
-       
+        this.setState({ dataSet: [...this.state.dataSet, createdItem] })
+
     }
 
     deleteHandler = (id) => {
@@ -99,67 +107,77 @@ export class SalePage extends Component {
 
     renderDataTable(dataSet, fields) {
         const { column, direction } = this.state;
-        if (fields.length > 0) {
-            return (
-                <Table celled sortable fixed>
-                    <Table.Header>
-                        <Table.Row>
-                            {fields.map(fieldName => {
-                                if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName !== "id")
-                                    return (
-                                        <Table.HeaderCell
-                                            key={`${this.props.model}-${fieldName}`}
-                                            sorted={column === fieldName ? direction : null}
-                                            onClick={this.sortHandler(fieldName)}>
-                                                               {Capitalize(fieldName)}
-                                        </Table.HeaderCell>)
-                            })}
 
-                            <Table.HeaderCell>Edit</Table.HeaderCell>
-                            <Table.HeaderCell>Delete</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {
-                            dataSet.map(item => {
-                                if (item.customer != null)
-                                    return (
-                                        <Table.Row key={item.id}>
-                                            <Table.Cell>{item.dateSold}</Table.Cell>
-                                            <Table.Cell>{this.state.customers.find((e)=>e.id==item.customerId).name}</Table.Cell>
-                                            <Table.Cell>{this.state.products.find((e) => e.id == item.productId).name}</Table.Cell>
-                                            <Table.Cell> {this.state.stores.find((e) => e.id == item.storeId).name}</Table.Cell>
-                                            <Table.Cell>
-                                                <SaleForm
-                                                    editHandler={this.editHandler}
-                                                    model={this.props.model}
-                                                    isEdit={true}
-                                                    item={item}
-                                                    customerOptions={this.state.customerOptions}
-                                                    productOptions={this.state.productOptions}
-                                                    storeOptions={this.state.storeOptions}
-                                                />
-                                            </Table.Cell>
-                                            <Table.Cell>
-                                                <DeleteConfirm item={item} model={this.props.model} deleteHandler={this.deleteHandler} />
-                                            </Table.Cell>
-                                        </Table.Row>
+        return (
+            <Table celled sortable fixed>
+                <Table.Header>
+                    <Table.Row>
+                        {fields.map(fieldName => {
+                            if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName !== "id")
+                                return (
+                                    <Table.HeaderCell
+                                        key={`${this.props.model}-${fieldName}`}
+                                        sorted={column === fieldName ? direction : null}
+                                        onClick={this.sortHandler(fieldName)}>
+                                        {Capitalize(fieldName)}
+                                    </Table.HeaderCell>)
+                        })}
 
-                                    )
-                            })
-                        }
-                    </Table.Body>
+                        <Table.HeaderCell>Edit</Table.HeaderCell>
+                        <Table.HeaderCell>Delete</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {
+                        dataSet.map(item => {
+                            if (item.customer != null)
+                                return (
+                                    <Table.Row key={item.id}>
+                                        <Table.Cell>{item.dateSold}</Table.Cell>
+                                        <Table.Cell>{this.state.customers.find((e) => e.id == item.customerId).name}</Table.Cell>
+                                        <Table.Cell>{this.state.products.find((e) => e.id == item.productId).name}</Table.Cell>
+                                        <Table.Cell> {this.state.stores.find((e) => e.id == item.storeId).name}</Table.Cell>
+                                        <Table.Cell>
+                                            <SaleForm
+                                                editHandler={this.editHandler}
+                                                model={this.props.model}
+                                                isEdit={true}
+                                                item={item}
+                                                customerOptions={this.state.customerOptions}
+                                                productOptions={this.state.productOptions}
+                                                storeOptions={this.state.storeOptions}
+                                            />
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <DeleteConfirm item={item} model={this.props.model} deleteHandler={this.deleteHandler} />
+                                        </Table.Cell>
+                                    </Table.Row>
 
-                </Table>
-            );
-        }
+                                )
+                        })
+                    }
+                </Table.Body>
+
+            </Table>
+        );
+
     }
 
+    paginationHandler = (e, data) => {
+        const currentPage = e.target.getAttribute("value");
+        this.setState({ currentPage })
+    }
+
+    numberOfRowHandler = (e, { value }) => {
+        this.setState({ numberOfRow: value });
+    }
+
+
     render() {
-        return (
-            <div>
-                {this.state.fields.length > 0
-                    ? <SaleForm
+        if (this.state.fields.length > 0) {
+            return (
+                <Container>
+                    <SaleForm
                         createHandler={this.createHandler}
                         model={this.props.model}
                         isEdit={false}
@@ -169,10 +187,31 @@ export class SalePage extends Component {
                         storeOptions={this.state.storeOptions}
 
                     />
-            : null}
-                {this.renderDataTable(this.state.dataSet, this.state.fields)}
-            </div>
-        );
+
+                    {this.renderDataTable(
+                        this.state.dataSet.slice((this.state.currentPage - 1) * this.state.numberOfRow, this.state.currentPage * this.state.numberOfRow),
+                        this.state.fields)
+                    }
+                    <Dropdown
+                        selection
+                        compact
+                        value={this.state.numberOfRow}
+                        onChange={this.numberOfRowHandler}
+                        options={this.numberOfRowOptions}
+                    />
+                    <Pagination
+                        defaultActivePage={this.state.currentPage}
+                        totalPages={Math.ceil(this.state.dataSet.length / this.state.numberOfRow)}
+                        onPageChange={this.paginationHandler}
+                        floated='right' />
+                </Container>
+            );
+
+
+        } else {
+            return <div></div>
+        }
+
     }
 }
 

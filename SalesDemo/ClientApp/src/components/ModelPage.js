@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
-import { Table ,Icon} from 'semantic-ui-react';
+import { Dropdown, Container,Table,  Pagination} from 'semantic-ui-react';
 import { ModelForm } from './ModelForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
@@ -15,8 +15,16 @@ export class ModelPage extends Component {
             fields: [],
             column: null,
             direction: null,
+            numberOfRow: 5,
+            currentPage: 1,
         };
     }
+
+    numberOfRowOptions = [
+        { key: 5, text: 5, value: 5 },
+        { key: 10, text: 10, value: 10 },
+        { key: 15, text: 15, value: 15 },
+    ];
 
     getData = () => {
         fetch('/api/' + this.props.model)
@@ -72,7 +80,7 @@ export class ModelPage extends Component {
     renderDataTable(dataSet, fields) {
         const { column, direction } = this.state;
 
-        if (fields.length > 0 ) {
+   
             return (
                 <Table sortable celled fixed>
                     <Table.Header>
@@ -98,7 +106,7 @@ export class ModelPage extends Component {
                                 if (item.name != null)
                                 return (
                                     <Table.Row key={item.id}>
-                                        {Object.keys(item).map(k => {
+                                        {Object.keys(item).map((k) => {
                                             if(k!=="id" && k!=="sale")
                                             return (
                                                 <Table.Cell key={`${this.props.model}-${item.id}-${k}`}>{item[k]}</Table.Cell>
@@ -120,17 +128,44 @@ export class ModelPage extends Component {
 
                 </Table>
             );
-        }
+    
+    }
+
+    paginationHandler = (e, data) => {
+        const currentPage = e.target.getAttribute("value");
+        this.setState({ currentPage })       
+    }
+
+    numberOfRowHandler = (e, { value }) => {
+        this.setState({ numberOfRow: value });
     }
 
     render() {
-        //{ console.log(this.state.dataSet); debugger;}
-        return (
-            <div>
-                {this.state.fields.length > 0 ? <ModelForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} /> : null}
-                {this.renderDataTable(this.state.dataSet, this.state.fields)}
-            </div>
-        );
+        if (this.state.fields.length > 0) {
+            return (
+                <Container >
+                    <ModelForm createHandler={this.createHandler} model={this.props.model} isEdit={false} item={this.state.dataSet[0]} />
+                    {this.renderDataTable(
+                        this.state.dataSet.slice((this.state.currentPage - 1) * this.state.numberOfRow, this.state.currentPage * this.state.numberOfRow),
+                        this.state.fields)
+                    }
+                    <Dropdown
+                        selection
+                        compact
+                        value={this.state.numberOfRow}
+                        onChange={this.numberOfRowHandler}
+                        options={this.numberOfRowOptions}
+                    />
+                    <Pagination
+                        defaultActivePage={this.state.currentPage}
+                        totalPages={Math.ceil(this.state.dataSet.length / this.state.numberOfRow)}
+                        onPageChange={this.paginationHandler}
+                    floated='right'/>
+                </Container>
+            );
+        } else {
+            return <div></div>
+        }
     }
 }
 
