@@ -13,8 +13,6 @@ export class ModelForm extends Component {
             item: Object.assign({}, props.item),
             errors: {}
         }
-
-
     }
 
     setItemToEmpty = () => {
@@ -48,6 +46,11 @@ export class ModelForm extends Component {
             if (key !== "id" && key !== "sale") {
                 if (this.state.item[key].trim() === "") {
                     errors[key] = `${Capitalize(key)} is required.`;
+                }
+            }
+            if (key === "price") {
+                if (isNaN(this.state.item[key])) {
+                    errors[key] = `Invalid number`;
                 }
             }
         })
