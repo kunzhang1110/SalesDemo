@@ -55,7 +55,7 @@ export class SaleForm extends Component {
                 }
             }
             if (key === "dateSold") {
-                let m = moment(this.state.item[key], 'MM/DD/YYYY');
+                let m = moment(this.state.item[key], 'MM/DD/YYYY',true);//true == strict parsing
                 if (!m.isValid()) {
                     errors[key] = `Invalid Date`;
                 }
@@ -66,7 +66,7 @@ export class SaleForm extends Component {
     }
 
     handleOpen = () => this.setState({ modalOpen: true })
-    handleClose = () => this.setState({ modalOpen: false })
+    handleClose = () => this.setState({ modalOpen: false, errors: {} })
 
     cancelHandler = () => {
         if (this.props.isEdit===false) {
