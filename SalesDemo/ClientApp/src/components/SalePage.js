@@ -4,7 +4,7 @@ import { Container, Pagination, Table, Dropdown } from 'semantic-ui-react';
 import { SaleForm } from './SaleForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
-import { Capitalize, formatDateToString } from "../utils"
+import { Capitalize} from "../utils"
 import moment from 'moment';
 
 export class SalePage extends Component {
@@ -120,6 +120,7 @@ export class SalePage extends Component {
                                         onClick={this.sortHandler(fieldName)}>
                                         {Capitalize(fieldName)}
                                     </Table.HeaderCell>)
+                            return null;
                         })}
 
                         <Table.HeaderCell>Edit</Table.HeaderCell>
@@ -132,9 +133,9 @@ export class SalePage extends Component {
                             if (item.customer != null)
                                 return (
                                     <Table.Row key={item.id}>
-                                        <Table.Cell>{this.state.customers.find((e) => e.id == item.customerId).name}</Table.Cell>
-                                        <Table.Cell>{this.state.products.find((e) => e.id == item.productId).name}</Table.Cell>
-                                        <Table.Cell> {this.state.stores.find((e) => e.id == item.storeId).name}</Table.Cell>
+                                        <Table.Cell>{this.state.customers.find((e) => e.id === item.customerId).name}</Table.Cell>
+                                        <Table.Cell>{this.state.products.find((e) => e.id === item.productId).name}</Table.Cell>
+                                        <Table.Cell> {this.state.stores.find((e) => e.id === item.storeId).name}</Table.Cell>
                                         <Table.Cell>{moment(item.dateSold, 'MM/DD/YYYY').format("DD MMM, YYYY")}</Table.Cell>
                                         <Table.Cell>
                                             <SaleForm
@@ -153,6 +154,7 @@ export class SalePage extends Component {
                                     </Table.Row>
 
                                 )
+                            return null;
                         })
                     }
                 </Table.Body>
@@ -215,3 +217,6 @@ export class SalePage extends Component {
 }
 
 
+SalePage.propTypes = {
+    model: PropTypes.string
+}

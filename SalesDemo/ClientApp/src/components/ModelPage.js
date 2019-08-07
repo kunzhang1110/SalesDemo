@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
-import { Dropdown, Container,Table,  Pagination} from 'semantic-ui-react';
+import { Dropdown, Container, Table, Pagination } from 'semantic-ui-react';
 import { ModelForm } from './ModelForm';
 import { DeleteConfirm } from './DeleteConfirm';
 import PropTypes from "prop-types";
-import { Capitalize} from '../utils'
+import { Capitalize } from '../utils'
 
 export class ModelPage extends Component {
 
@@ -32,7 +32,7 @@ export class ModelPage extends Component {
                 response => response.json())
             .then(data => {
                 var fields = Object.keys(data[0]);
-                this.setState({ dataSet: data , fields:fields});
+                this.setState({ dataSet: data, fields: fields });
             });
 
     }
@@ -80,39 +80,41 @@ export class ModelPage extends Component {
     renderDataTable(dataSet, fields) {
         const { column, direction } = this.state;
 
-   
-            return (
-                <Table sortable celled fixed>
-                    <Table.Header>
-                        <Table.Row>
-                            {fields.map(fieldName => {
-                                if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName!=="id")
-                                    return (
-                                        <Table.HeaderCell
-                                            key={`${this.props.model}-${fieldName}`}
-                                            sorted={column ===  fieldName  ? direction : null}
-                                            onClick={this.sortHandler(fieldName)}>
-                                            {Capitalize(fieldName)}
-                                        </Table.HeaderCell>)
-                               })}
 
-                            <Table.HeaderCell>Edit</Table.HeaderCell>
-                            <Table.HeaderCell>Delete</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {
-                            dataSet.map(item => {
-                                if (item.name != null)
+        return (
+            <Table sortable celled fixed>
+                <Table.Header>
+                    <Table.Row>
+                        {fields.map(fieldName => {
+                            if (!fieldName.includes("Id") && fieldName !== "sale" && fieldName !== "id")
+                                return (
+                                    <Table.HeaderCell
+                                        key={`${this.props.model}-${fieldName}`}
+                                        sorted={column === fieldName ? direction : null}
+                                        onClick={this.sortHandler(fieldName)}>
+                                        {Capitalize(fieldName)}
+                                    </Table.HeaderCell>)
+                            return null;
+                        })}
+
+                        <Table.HeaderCell>Edit</Table.HeaderCell>
+                        <Table.HeaderCell>Delete</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {
+                        dataSet.map(item => {
+                            if (item.name != null)
                                 return (
                                     <Table.Row key={item.id}>
                                         {Object.keys(item).map((k) => {
-                                            if(k!=="id" && k!=="sale")
-                                            return (
-                                                <Table.Cell key={`${this.props.model}-${item.id}-${k}`}>{item[k]}</Table.Cell>
-                                            )
-                                        })
-                                        }
+                                            if (k !== "id" && k !== "sale")
+                                                return (
+                                                    <Table.Cell key={`${this.props.model}-${item.id}-${k}`}>{item[k]}</Table.Cell>
+                                                )
+                                            return null;
+                                        })}
+                                        
                                         <Table.Cell>
                                             <ModelForm item={item} editHandler={this.editHandler} model={this.props.model} isEdit={true} />
                                         </Table.Cell>
@@ -121,19 +123,20 @@ export class ModelPage extends Component {
                                         </Table.Cell>
                                     </Table.Row>
                                 )
-                            })
-                          
-                        }
-                    </Table.Body>
+                            return null;
+                        })
 
-                </Table>
-            );
-    
+                    }
+                </Table.Body>
+
+            </Table>
+        );
+
     }
 
     paginationHandler = (e, data) => {
         const currentPage = e.target.getAttribute("value");
-        this.setState({ currentPage })       
+        this.setState({ currentPage })
     }
 
     numberOfRowHandler = (e, { value }) => {
@@ -160,7 +163,7 @@ export class ModelPage extends Component {
                         defaultActivePage={this.state.currentPage}
                         totalPages={Math.ceil(this.state.dataSet.length / this.state.numberOfRow)}
                         onPageChange={this.paginationHandler}
-                    floated='right'/>
+                        floated='right' />
                 </Container>
             );
         } else {

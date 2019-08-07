@@ -17,7 +17,7 @@ export class ModelForm extends Component {
 
     setItemToEmpty = () => {
         let blankItem = {};
-        Object.keys(this.props.item).map(name => {//clear item values
+        Object.keys(this.props.item).forEach(name => {//clear item values
             blankItem[name] = "";
         });
         this.setState({ item: blankItem, modalOpen: false });
@@ -33,7 +33,7 @@ export class ModelForm extends Component {
     handleClose = () => this.setState({ modalOpen: false })
 
     cancelHandler = () => {
-        if (this.props.isEdit == false) {
+        if (this.props.isEdit === false) {
             this.setItemToEmpty();
         } else {
             this.setState({ item: this.props.item, modalOpen: false });
@@ -42,7 +42,7 @@ export class ModelForm extends Component {
 
     validate = () => {
         const errors = {};
-        Object.keys(this.state.item).map(key => {
+        Object.keys(this.state.item).forEach(key => {
             if (key !== "id" && key !== "sale") {
                 if (this.state.item[key].trim() === "") {
                     errors[key] = `${Capitalize(key)} is required.`;
@@ -114,7 +114,7 @@ export class ModelForm extends Component {
                                         </Form.Field>
                                     )
                                 }
-                                return;
+                                return null;
                             })}
 
                         </Form>

@@ -19,7 +19,7 @@ export class SaleForm extends Component {
 
     setItemToEmpty() {
         var item = {};
-        Object.keys(this.state.item).map(key => {
+        Object.keys(this.state.item).forEach(key => {
             if (key === "dateSold") {
                 item[key] = formatDateToString(new Date());//default current date
             }
@@ -31,7 +31,7 @@ export class SaleForm extends Component {
     }
 
     componentDidMount() {
-        if (this.props.isEdit == false) {
+        if (this.props.isEdit === false) {
             this.setItemToEmpty();
         }
         else {
@@ -46,8 +46,8 @@ export class SaleForm extends Component {
 
     validate = () => {
         const errors = {};
-     
-        Object.keys(this.state.item).map(key => {
+
+        Object.keys(this.state.item).forEach(key => {
             if (key === "dateSold" || key === "customerId" || key === "productId" || key === "storeId"  ) {
                 if (this.state.item[key] === "") {
                     let fieldname = Capitalize(key.replace(/Id$/, x => "")); //remove xxxId's Id part from field name
